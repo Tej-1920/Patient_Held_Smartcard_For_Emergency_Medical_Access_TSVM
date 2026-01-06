@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Medical Records{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-folder-open"></i> Medical Records</h2>
+            <a href="{% url 'patients:upload_record' %}" class="btn btn-primary">
+                <i class="fas fa-upload"></i> Upload New Record
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        {% if records %}
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Your Medical Records</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Type</th>
+                                    <th>Hospital</th>
+                                    <th>Date</th>
+                                    <th>Uploaded</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for record in records %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ record.title }}</strong>
+                                        {% if record.description %}
+                                        <br><small class="text-muted">{{ record.description|truncatewords:10 }}</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">{{ record.get_record_type_display }}</span>
+                                    </td>
+                                    <td>{{ record.hospital_name|default:"Not specified" }}</td>
+                                    <td>{{ record.date_of_record|default:"Not specified"|date:"M d, Y" }}</td>
+                                    <td>{{ record.uploaded_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'patients:view_record_detail' record.id %}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i> View
+                                            </a>
+                                            {% if record.file %}
+                                            <a href="{{ record.file.url }}" class="btn btn-sm btn-outline-success" target="_blank">
+                                                <i class="fas fa-download"></i> Download
+                                            </a>
+                                            {% endif %}
+                                            <a href="{% url 'patients:delete_record' record.id %}" class="btn btn-sm btn-outline-danger">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-file-medical fa-4x text-muted mb-3"></i>
+                    <h4>No Medical Records</h4>
+                    <p class="text-muted">You haven't uploaded any medical records yet.</p>
+                    <a href="{% url 'patients:upload_record' %}" class="btn btn-primary">
+                        <i class="fas fa-upload"></i> Upload Your First Record
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

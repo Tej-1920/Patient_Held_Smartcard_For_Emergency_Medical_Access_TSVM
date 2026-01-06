@@ -1,0 +1,447 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About - Patient Smart Card System{% endblock %}
+
+{% block content %}
+<div class="hero-section text-center">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-4">
+            <i class="fas fa-id-card"></i> About Patient Smart Card System
+        </h1>
+        <p class="lead mb-4">
+            Revolutionizing Emergency Healthcare Access with Smart Technology
+        </p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Language Selector -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="mb-3">Select Language</h5>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-primary" onclick="showLanguage('english')">English</button>
+                        <button type="button" class="btn btn-outline-primary" onclick="showLanguage('hindi')">हिंदी</button>
+                        <button type="button" class="btn btn-outline-primary" onclick="showLanguage('telugu')">తెలుగు</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-play-circle"></i> How It Works</h5>
+                </div>
+                <div class="card-body text-center">
+                    <!-- Local Video -->
+                    <div class="mb-4">
+                        <video controls class="w-100 rounded" poster="{% static 'images/video-poster.jpg' %}">
+                            <source src="{% static 'videos/about_vedio_english.mp4' %}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <p class="text-muted mt-2">Local Demo Video</p>
+                    </div>
+                    
+                    <!-- YouTube Video -->
+                    <!--<div class="mb-4">
+                        <h6>Or Watch Our AI-Powered Demonstration</h6>
+                        <div class="ratio ratio-16x9">
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+                                    title="Patient Smart Card System Demo" 
+                                    frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen>
+                            </iframe>
+                        </div>
+                        <p class="text-muted">YouTube Video Tutorial</p>
+                    </div>-->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- English Content -->
+    <div id="english-content" class="language-content">
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-users"></i> For Patients</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>Complete Healthcare Management</h6>
+                        <p>Our Patient Smart Card system empowers you to take control of your medical information. Register once, upload all your medical records, and get a unique Patient ID that healthcare providers can use during emergencies.</p>
+                        
+                        <h6 class="mt-3">Key Features:</h6>
+                        <ul>
+                            <li>Secure online registration</li>
+                            <li>Upload and manage medical documents</li>
+                            <li>Emergency contact management</li>
+                            <li>Blood group and medical history storage</li>
+                            <li>24/7 emergency access for verified doctors</li>
+                        </ul>
+                        
+                        <h6 class="mt-3">How It Works:</h6>
+                        <ol>
+                            <li>Register with your personal details</li>
+                            <li>Complete your medical profile</li>
+                            <li>Upload your medical records</li>
+                            <li>Receive your unique Patient ID</li>
+                            <li>Share your ID during emergencies</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-user-md"></i> For Healthcare Providers</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>Emergency Access When It Matters Most</h6>
+                        <p>Doctors can access critical patient information during emergencies using our secure, NMC-verified system. Every access is logged and monitored to ensure patient privacy and security.</p>
+                        
+                        <h6 class="mt-3">Key Features:</h6>
+                        <ul>
+                            <li>NMC registration verification</li>
+                            <li>Emergency patient access</li>
+                            <li>Complete access logging</li>
+                            <li>Read-only medical record viewing</li>
+                            <li>IP and session tracking</li>
+                        </ul>
+                        
+                        <h6 class="mt-3">Emergency Process:</h6>
+                        <ol>
+                            <li>Login with NMC credentials</li>
+                            <li>Enter patient's unique ID</li>
+                            <li>Provide emergency reason</li>
+                            <li>Access critical medical information</li>
+                            <li>All access is automatically logged</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-shield-alt"></i> Security & Privacy</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Patient Privacy</h6>
+                                <p>Your medical information is encrypted and stored securely. Only verified healthcare professionals can access your records during genuine emergencies, and every access is logged for your safety.</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Doctor Verification</h6>
+                                <p>All doctors must verify their NMC registration before accessing patient records. This ensures only qualified medical professionals can use the system.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hindi Content -->
+    <div id="hindi-content" class="language-content" style="display: none;">
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-users"></i> मरीजों के लिए</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>पूर्ण स्वास्थ्य देखभाल</h6>
+                        <p>हमारा पेशेंट स्मार्ट कार्ड सिस्टम आपको अपनी चिकित्सा जानकारी पर नियंत्रण रखने का अधिकार देता है। एक बार रजिस्टर करें, अपने सभी चिकित्सा रिकॉर्ड अपलोड करें, और आपातकालीन स्थितियों में स्वास्थ्य देखभाल उपयोग करने के लिए एक अद्वितीय पेशेंट ID प्राप्त करें।</p>
+                        
+                        <h6 class="mt-3">मुख्य विशेषताएं:</h6>
+                        <ul>
+                            <li>सुरक्षित ऑनलाइन पंजीकरण</li>
+                            <li>चिकित्सा दस्तावेज अपलोड और प्रबंधित करें</li>
+                            <li>आपातकालीन संपर्क प्रबंधन</li>
+                            <li>रक्त समूह और चिकित्सा इतिहास भंडारण</li>
+                            <li>सत्यापित डॉक्टरों के लिए 24/7 आपातकालीन पहुंच</li>
+                        </ul>
+                        
+                        <h6 class="mt-3">यह कैसे काम करता है:</h6>
+                        <ol>
+                            <li>अपनी व्यक्तिगत जानकारी के साथ पंजीकृत करें</li>
+                            <li>अपना चिकित्सा प्रोफाइल पूरा करें</li>
+                            <li>अपने चिकित्सा रिकॉर्ड अपलोड करें</li>
+                            <li>अपनी अद्वितीय पेशेंट ID प्राप्त करें</li>
+                            <li>आपातकालीन स्थितियों में अपनी ID साझा करें</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-user-md"></i> स्वास्थ्य देखभाल प्रदाताओं के लिए</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>जब इसकी सबसे ज्यादा आवश्यकता हो तो आपातकालीन पहुंच</h6>
+                        <p>डॉक्टर हमारे सुरक्षित, NMC-सत्यापित सिस्टम का उपयोग करके आपातकालीन स्थितियों में महत्वपूर्ण रोगी जानकारी तक पहुंच सकते हैं। प्रत्येक पहुंच लॉग किया जाता है और रोगी की गोपनीयता और सुरक्षा सुनिश्चित करने के लिए निगरानी की जाती है।</p>
+                        
+                        <h6 class="mt-3">मुख्य विशेषताएं:</h6>
+                        <ul>
+                            <li>NMC पंजीकरण सत्यापन</li>
+                            <li>आपातकालीन रोगी पहुंच</li>
+                            <li>पूर्ण पहुंच लॉगिंग</li>
+                            <li>केवल-पढ़ने के लिए चिकित्सा रिकॉर्ड देखना</li>
+                            <li>IP और सत्र ट्रैकिंग</li>
+                        </ul>
+                        
+                        <h6 class="mt-3">आपातकालीन प्रक्रिया:</h6>
+                        <ol>
+                            <li>NMC क्रेडेंशियल्स के साथ लॉगिन करें</li>
+                            <li>रोगी की अद्वितीय ID दर्ज करें</li>
+                            <li>आपातकालीन कारण प्रदान करें</li>
+                            <li>महत्वपूर्ण चिकित्सा जानकारी तक पहुंचें</li>
+                            <li>सभी पहुंच स्वचालित रूप से लॉग किए जाते हैं</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Telugu Content -->
+    <div id="telugu-content" class="language-content" style="display: none;">
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-users"></i> రోగుల కోసం</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>పూర్తి ఆరోగ్య నిర్వహణ</h6>
+                        <p>మా పేషెంట్ స్మార్ట్ కార్డ్ సిస్టమ్ మీ వైద్య సమాచారంపై నియంత్రణ తీసుకోవడానికి మిమ్మల్ను. ఒకసారి నమోదు, మీ అన్ని వైద్య రికార్డ్లను అప్‌లోడ్ చేయండి, మరి అత్యవసర పరిస్థితులలో వైద్య సమాచారాన్ని ఉపయోగించడానికి ఒక అనన్య పేషెంట్ ID పొందుకోండి.</p>
+                        
+                        <h6 class="mt-3">ముఖ్య లక్షణలు:</h6>
+                        <ul>
+                            <li>సురక్షిత ఆన్‌లైన్ నమోదు</li>
+                            <li>వైద్య పత్రాలను అప్‌లోడ్ చేయడం మరియా నిర్వహించడం</li>
+                            <li>అత్యవసర సంప్రదాయ నిర్వహణ</li>
+                            <li>రక్త సమూహం మరియు వైద్య చరిత్ర నిల్వ</li>
+                            <li>ధృవీకరించబడిన వైద్యుల కోసం 24/7 అత్యవసర ప్రాప్యం</li>
+                        </ul>
+                        
+                        <h6 class="mt-3">ఇది ఎలా పనిచేస్తుంది:</h6>
+                        <ol>
+                            <li>మీ వ్యక్తిగత వివరాలతో నమోదుగా మారు</li>
+                            <li>మీ వైద్య ప్రొఫైల్‌ను పూర్తి చేయండి</li>
+                            <li>మీ వైద్య రికార్డ్లను అప్‌లోడ్ చేయండి</li>
+                            <li>మీ అనన్య పేషెంట్ ID పొందుకోండి</li>
+                            <li>అత్యవసర పరిస్థితులలో మీ ID పంచుకోండి</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-user-md"></i> ఆరోగ్య సంరక్షకల కోసం</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>అవసరాల అవసరం ముఖ్యమైనప్పుడునప్పుడు ప్రాప్యం</h6>
+                        <p>వైద్యులు మా సురక్షిత, NMC-ధృవీకరించబడిన సిస్టమ్ ఉపయోగించి అత్యవసర పరిస్థితులలో ముఖ్యమైన రోగి సమాచారాన్ని యాక్సెస్ చేయవచ్చు. ప్రతి యాక్సెస్ లాగ్ చేయబడుతుంది మరియు రోగి గోప్యత మరియు భద్రత కలిగి నిర్ధారణ కోసం చూస్తారు.</p>
+                        
+                        <h6 class="mt-3">ముఖ్య లక్షణలు:</h6>
+                        <ul>
+                            <li>NMC నమోదు ధృవీకరణ</li>
+                            <li>అత్యవసర రోగి ప్రాప్యం</li>
+                            <li>పూర్తి యాక్సెస్ లాగింగ్</li>
+                            <li>చదవడానికి-మాత్రమే వైద్య రికార్డ్ల వీక్షణ</li>
+                            <li>IP మరియు సెషన్ ట్రాకింగ్</li>
+                        </ul>
+                        
+                        <h6 class="mt-3">అత్యవసర ప్రక్రియ:</h6>
+                        <ol>
+                            <li>NMC క్రెడెన్షియల్స్‌తో లాగిన్ అవుతుండి</li>
+                            <li>రోగి యొక్క అనన్య ID నమోదు చేయండి</li>
+                            <li>అత్యవసర కారణాన్ని అందించుకోండి</li>
+                            <li>ముఖ్యమైన వైద్య సమాచారాన్ని యాక్సెస్ చేయండి</li>
+                            <li>అన్ని యాక్సెస్ స్వయంచాలితంగా లాగ్ చేయబడుతుంది</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-envelope"></i> Contact Us</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <h6><i class="fas fa-phone"></i> Phone</h6>
+                            <p>+91-9177225732</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6><i class="fas fa-envelope"></i> Email</h6>
+                            <p>c8projectteam@gmail.com</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6><i class="fas fa-clock"></i> Support Hours</h6>
+                            <p>24/7 Emergency Support</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.language-content {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.ratio-16x9 {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+}
+
+.ratio-16x9 iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 10px;
+}
+
+.video-container {
+    background: #000;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+video {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+video::-webkit-media-controls-panel {
+    background: linear-gradient(135deg, var(--primary-color), var(--info-color));
+}
+
+video::-webkit-media-controls-timeline {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.card-header h5 {
+    color: white;
+}
+
+.btn-group .btn {
+    margin: 0 5px;
+    border-radius: 25px;
+    font-weight: 600;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.h6 {
+    color: #007bff;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+ul, ol {
+    padding-left: 1.5rem;
+}
+
+li {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+p {
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.video-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    padding: 2rem;
+    color: white;
+    margin-bottom: 2rem;
+}
+
+.video-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.video-description {
+    opacity: 0.9;
+    font-size: 1.1rem;
+}
+</style>
+
+<script>
+function showLanguage(language) {
+    // Hide all language contents
+    document.querySelectorAll('.language-content').forEach(content => {
+        content.style.display = 'none';
+    });
+    
+    // Show selected language content
+    document.getElementById(language + '-content').style.display = 'block';
+    
+    // Update button styles
+    document.querySelectorAll('.btn-group .btn').forEach(btn => {
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-outline-primary');
+    });
+    
+    // Highlight active button
+    event.target.classList.remove('btn-outline-primary');
+    event.target.classList.add('btn-primary');
+}
+</script>
+{% endblock %}

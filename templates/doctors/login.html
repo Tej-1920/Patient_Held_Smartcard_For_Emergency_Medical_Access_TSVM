@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Doctor Login{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="fas fa-user-md"></i> Doctor Login</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{% url 'doctors:login' %}">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                        <div class="form-text">Enter your registered email address</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                        <div class="form-text">
+                            <a href="#" class="text-decoration-none">Forgot password?</a>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="remember">
+                        <label class="form-check-label" for="remember">
+                            Remember me
+                        </label>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                    </div>
+                </form>
+
+                <hr class="my-4">
+                
+                <div class="text-center">
+                    <p class="mb-2">Don't have an account?</p>
+                    <a href="{% url 'doctors:register' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-user-plus"></i> Register Now
+                    </a>
+                </div>
+
+                <div class="text-center mt-3">
+                    <small class="text-muted">
+                        Are you a patient? 
+                        <a href="{% url 'patients:login' %}">Login as Patient</a>
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-body">
+                <h6 class="card-title"><i class="fas fa-lightbulb"></i> Doctor Portal Features</h6>
+                <ul class="small mb-0">
+                    <li>NMC verified doctor accounts</li>
+                    <li>Emergency patient access with logging</li>
+                    <li>Secure viewing of medical records</li>
+                    <li>Complete access audit trail</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-control {
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.btn-lg {
+    padding: 12px 30px;
+    font-weight: 600;
+}
+
+.card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+</style>
+{% endblock %}

@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="fas fa-user-edit"></i> Edit Medical Profile</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" class="needs-validation" novalidate enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="profile-section">
+                        <h5><i class="fas fa-user"></i> Personal Information</h5>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="{{ form.profile_image.id_for_label }}" class="form-label">Profile Image</label>
+                                {{ form.profile_image }}
+                                {% if form.profile_image.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.profile_image.errors.0 }}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Upload your profile picture (optional)</div>
+                                {% if patient.profile_image %}
+                                    <div class="mt-2">
+                                        <img src="{{ patient.profile_image.url }}" alt="Profile Image" class="img-thumbnail" style="max-height: 100px;">
+                                        <br>
+                                        <small class="text-muted">Current profile image</small>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.date_of_birth.id_for_label }}" class="form-label">Date of Birth</label>
+                                {{ form.date_of_birth }}
+                                {% if form.date_of_birth.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.date_of_birth.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.gender.id_for_label }}" class="form-label">Gender</label>
+                                {{ form.gender }}
+                                {% if form.gender.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.gender.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.blood_group.id_for_label }}" class="form-label">Blood Group</label>
+                                {{ form.blood_group }}
+                                {% if form.blood_group.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.blood_group.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-section">
+                        <h5><i class="fas fa-map-marker-alt"></i> Address</h5>
+                        <div class="mb-3">
+                            <label for="{{ form.address.id_for_label }}" class="form-label">Full Address</label>
+                            {{ form.address }}
+                            {% if form.address.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.address.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="profile-section">
+                        <h5><i class="fas fa-phone-alt"></i> Emergency Contact</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.emergency_contact_name.id_for_label }}" class="form-label">Contact Name</label>
+                                {{ form.emergency_contact_name }}
+                                {% if form.emergency_contact_name.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.emergency_contact_name.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.emergency_contact_phone.id_for_label }}" class="form-label">Contact Phone</label>
+                                {{ form.emergency_contact_phone }}
+                                {% if form.emergency_contact_phone.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.emergency_contact_phone.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.emergency_contact_relation.id_for_label }}" class="form-label">Relationship</label>
+                            {{ form.emergency_contact_relation }}
+                            {% if form.emergency_contact_relation.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.emergency_contact_relation.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="profile-section">
+                        <h5><i class="fas fa-heartbeat"></i> Medical Information</h5>
+                        <div class="mb-3">
+                            <label for="{{ form.chronic_diseases.id_for_label }}" class="form-label">Chronic Diseases</label>
+                            {{ form.chronic_diseases }}
+                            {% if form.chronic_diseases.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.chronic_diseases.errors.0 }}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">List any chronic conditions (e.g., Diabetes, Hypertension, Asthma)</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.allergies.id_for_label }}" class="form-label">Allergies</label>
+                            {{ form.allergies }}
+                            {% if form.allergies.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.allergies.errors.0 }}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">List any known allergies (medications, food, etc.)</div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> 
+                        <strong>Important:</strong> This information will be available to healthcare providers 
+                        during emergencies. Please ensure all details are accurate.
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'patients:dashboard' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-save"></i> Save Profile
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-control, .form-select {
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.btn-lg {
+    padding: 12px 30px;
+    font-weight: 600;
+}
+
+.profile-section {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.profile-section h5 {
+    color: #007bff;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const textareas = document.querySelectorAll('textarea');
+    textareas.forEach(textarea => {
+        textarea.classList.add('form-control');
+    });
+    
+    const selects = document.querySelectorAll('select');
+    selects.forEach(select => {
+        select.classList.add('form-select');
+    });
+});
+</script>
+{% endblock %}

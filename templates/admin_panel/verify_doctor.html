@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Verify Doctor - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">
+                    <i class="fas fa-user-check"></i> 
+                    Verify Doctor Account
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Verification Required:</strong> Please review the doctor's information below before verifying their account.
+                </div>
+
+                <!-- Doctor Information -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Personal Information</h6>
+                        <p><strong>Name:</strong> Dr. {{ doctor.first_name }} {{ doctor.last_name }}</p>
+                        <p><strong>Email:</strong> {{ doctor.email }}</p>
+                        <p><strong>Phone:</strong> {{ doctor.phone_number }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Professional Details</h6>
+                        <p><strong>Specialization:</strong> 
+                            <span class="badge bg-primary">{{ doctor.get_specialization_display }}</span>
+                        </p>
+                        <p><strong>Hospital:</strong> {{ doctor.hospital_name }}</p>
+                        <p><strong>Experience:</strong> {{ doctor.years_of_experience }} years</p>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Credentials</h6>
+                        <p><strong>NMC Registration:</strong> {{ doctor.nmc_registration_number }}</p>
+                        <p><strong>Medical License:</strong> {{ doctor.medical_license_number }}</p>
+                        <p><strong>State Council:</strong> {{ doctor.state_medical_council }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Registration Details</h6>
+                        <p><strong>Doctor ID:</strong> 
+                            <span class="badge bg-info">{{ doctor.doctor_id }}</span>
+                        </p>
+                        <p><strong>Registration Date:</strong> {{ doctor.created_at|date:"M d, Y H:i" }}</p>
+                        <p><strong>Current Status:</strong> 
+                            <span class="badge bg-warning">Pending Verification</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Verification Form -->
+                <form method="post" class="mt-4">
+                    {% csrf_token %}
+                    
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Important:</strong> By verifying this doctor, you confirm that:
+                        <ul class="mb-0 mt-2">
+                            <li>All provided information is accurate</li>
+                            <li>The doctor's credentials are valid</li>
+                            <li>The doctor is eligible to practice medicine</li>
+                            <li>You take responsibility for this verification</li>
+                        </ul>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'admin_panel:manage_doctors' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Doctors
+                        </a>
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-check-circle"></i> 
+                            Verify Doctor Account
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card-header {
+    border-bottom: 3px solid #ffc107;
+}
+
+.badge {
+    font-size: 0.8em;
+}
+
+.alert ul {
+    margin-bottom: 0;
+}
+
+.alert li {
+    margin-bottom: 0.5rem;
+}
+
+.alert li:last-child {
+    margin-bottom: 0;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,248 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Doctor Registration{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="fas fa-user-md"></i> Doctor Registration</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> 
+                        <strong>NMC Verification Required:</strong> All registrations are subject to verification 
+                        using your NMC registration number. Your account will be activated after admin approval.
+                    </div>
+
+                    <div class="profile-section">
+                        <h5><i class="fas fa-user"></i> Personal Information</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name *</label>
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.first_name.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name *</label>
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.last_name.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.email.id_for_label }}" class="form-label">Email Address *</label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.email.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.phone_number.id_for_label }}" class="form-label">Phone Number *</label>
+                                {{ form.phone_number }}
+                                {% if form.phone_number.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.phone_number.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-section">
+                        <h5><i class="fas fa-certificate"></i> Professional Information</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.nmc_registration_number.id_for_label }}" class="form-label">NMC Registration Number *</label>
+                                {{ form.nmc_registration_number }}
+                                {% if form.nmc_registration_number.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.nmc_registration_number.errors.0 }}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Enter your valid NMC registration number</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.medical_license_number.id_for_label }}" class="form-label">Medical License Number *</label>
+                                {{ form.medical_license_number }}
+                                {% if form.medical_license_number.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.medical_license_number.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.state_medical_council.id_for_label }}" class="form-label">State Medical Council *</label>
+                                {{ form.state_medical_council }}
+                                {% if form.state_medical_council.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.state_medical_council.errors.0 }}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Select your state medical council</div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.specialization.id_for_label }}" class="form-label">Specialization *</label>
+                                {{ form.specialization }}
+                                {% if form.specialization.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.specialization.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.years_of_experience.id_for_label }}" class="form-label">Years of Experience *</label>
+                                {{ form.years_of_experience }}
+                                {% if form.years_of_experience.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.years_of_experience.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-section">
+                        <h5><i class="fas fa-hospital"></i> Hospital Information</h5>
+                        <div class="mb-3">
+                            <label for="{{ form.hospital_name.id_for_label }}" class="form-label">Hospital/Clinic Name *</label>
+                            {{ form.hospital_name }}
+                            {% if form.hospital_name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.hospital_name.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.hospital_address.id_for_label }}" class="form-label">Hospital Address *</label>
+                            {{ form.hospital_address }}
+                            {% if form.hospital_address.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.hospital_address.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="profile-section">
+                        <h5><i class="fas fa-lock"></i> Security</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.password1.id_for_label }}" class="form-label">Password *</label>
+                                {{ form.password1 }}
+                                {% if form.password1.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.password1.errors.0 }}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Password must be at least 8 characters long.</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.password2.id_for_label }}" class="form-label">Confirm Password *</label>
+                                {{ form.password2 }}
+                                {% if form.password2.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.password2.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i> 
+                        <strong>Terms of Use:</strong> By registering, you agree to use this system only for 
+                        legitimate medical emergencies and patient care. All access is logged and may be 
+                        audited for compliance with medical ethics and privacy laws.
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'doctors:home' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-user-plus"></i> Register Account
+                        </button>
+                    </div>
+                </form>
+
+                <hr class="my-4">
+                
+                <div class="text-center">
+                    <p class="mb-0">Already have an account? 
+                        <a href="{% url 'doctors:login' %}">Login here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-control, .form-select {
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.btn-lg {
+    padding: 12px 30px;
+    font-weight: 600;
+}
+
+.profile-section {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.profile-section h5 {
+    color: #007bff;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const textareas = document.querySelectorAll('textarea');
+    textareas.forEach(textarea => {
+        textarea.classList.add('form-control');
+    });
+    
+    const selects = document.querySelectorAll('select');
+    selects.forEach(select => {
+        select.classList.add('form-select');
+    });
+    
+    const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="number"]');
+    inputs.forEach(input => {
+        input.classList.add('form-control');
+    });
+});
+</script>
+{% endblock %}

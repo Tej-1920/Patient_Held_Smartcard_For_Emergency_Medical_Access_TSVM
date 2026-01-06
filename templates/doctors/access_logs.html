@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Access Logs - Doctor Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-history"></i> Access Logs</h2>
+            <div>
+                <a href="{% url 'doctors:dashboard' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-list"></i> Recent Access Activity
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if access_logs %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>Patient</th>
+                                    <th>Access Type</th>
+                                    <th>Reason</th>
+                                    <th>IP Address</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for log in access_logs %}
+                                    <tr>
+                                        <td>{{ log.accessed_at|date:"M d, Y H:i" }}</td>
+                                        <td>
+                                            {% if log.patient %}
+                                                {{ log.patient.first_name }} {{ log.patient.last_name }}
+                                                <br>
+                                                <small class="text-muted">{{ log.patient.patient_id }}</small>
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if log.access_type == 'EMERGENCY' %}
+                                                <span class="badge bg-danger">Emergency</span>
+                                            {% else %}
+                                                <span class="badge bg-primary">{{ log.access_type }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ log.access_reason|truncatewords:10 }}</td>
+                                        <td>{{ log.ip_address }}</td>
+                                        <td>
+                                            {% if log.validation_status == 'AUTHORIZED' %}
+                                                <span class="badge bg-success">Authorized</span>
+                                            {% elif log.validation_status == 'BLACKLISTED' %}
+                                                <span class="badge bg-danger">Blocked</span>
+                                            {% else %}
+                                                <span class="badge bg-warning">{{ log.validation_status }}</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-history fa-4x text-muted mb-3"></i>
+                        <h5 class="text-muted mb-2">No Access Logs Found</h5>
+                        <p class="text-muted mb-0">
+                            You haven't accessed any patient records yet.
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

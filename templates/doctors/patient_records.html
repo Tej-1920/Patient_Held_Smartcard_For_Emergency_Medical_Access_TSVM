@@ -1,0 +1,264 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Medical Records - {{ patient.first_name }} {{ patient.last_name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-file-medical"></i> Medical Records</h2>
+            <div>
+                <a href="{% url 'doctors:view_patient_profile' patient.id %}" class="btn btn-outline-secondary me-2">
+                    <i class="fas fa-user"></i> Patient Profile
+                </a>
+                <a href="{% url 'doctors:search_patient' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-search"></i> Search Patients
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-2">
+                        {% if patient.profile_image %}
+                            <img src="{{ patient.profile_image.url }}" alt="{{ patient.first_name }} {{ patient.last_name }}" 
+                                 class="img-fluid rounded-circle border border-2 border-primary" 
+                                 style="max-width: 60px; height: 60px; object-fit: cover;">
+                        {% else %}
+                            <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center" 
+                                 style="width: 60px; height: 60px;">
+                                <i class="fas fa-user fa-2x text-muted"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-8">
+                        <h5 class="mb-1">{{ patient.first_name }} {{ patient.last_name }}</h5>
+                        <p class="mb-0 text-muted">
+                            <i class="fas fa-id-badge"></i> {{ patient.patient_id }} | 
+                            <i class="fas fa-envelope"></i> {{ patient.email }} | 
+                            <i class="fas fa-phone"></i> {{ patient.phone_number }}
+                        </p>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="text-end">
+                            <span class="badge bg-danger">{{ patient.get_blood_group_display }}</span>
+                            <p class="small text-muted mt-1 mb-0">{{ patient.get_gender_display }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-file-medical"></i> 
+                    All Medical Records ({{ records|length }} records)
+                </h5>
+                <div>
+                    <span class="badge bg-info">
+                        <i class="fas fa-download"></i> Click document to download
+                    </span>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if records %}
+                    {% for record in records %}
+                        <div class="record-item mb-4">
+                            <div class="row align-items-center">
+                                <div class="col-md-1">
+                                    <div class="text-center">
+                                        {% if record.file %}
+                                            <i class="fas fa-file-pdf fa-2x text-danger"></i>
+                                        {% else %}
+                                            <i class="fas fa-file-medical fa-2x text-muted"></i>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-7">
+                                    <h6 class="mb-1">{{ record.get_record_type_display }}</h6>
+                                    <p class="mb-1">{{ record.description }}</p>
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar"></i> Uploaded: {{ record.uploaded_at|date:"F d, Y H:i" }}
+                                        {% if record.doctor %}
+                                            | <i class="fas fa-user-md"></i> Dr. {{ record.doctor.first_name }} {{ record.doctor.last_name }}
+                                        {% endif %}
+                                    </small>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="text-center">
+                                        {% if record.file %}
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check"></i> Available
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">
+                                                <i class="fas fa-times"></i> No File
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="text-end">
+                                        {% if record.file %}
+                                            <a href="{{ record.file.url }}" class="btn btn-primary btn-sm" target="_blank">
+                                                <i class="fas fa-download"></i> Download
+                                            </a>
+                                        {% else %}
+                                            <button class="btn btn-outline-secondary btn-sm" disabled>
+                                                <i class="fas fa-times"></i> No File
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% if not forloop.last %}
+                            <hr class="my-3">
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-file-medical fa-4x text-muted mb-3"></i>
+                        <h5 class="text-muted mb-2">No Medical Records Found</h5>
+                        <p class="text-muted mb-0">
+                            This patient hasn't uploaded any medical records yet.
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-heartbeat"></i> Medical Summary</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="text-center">
+                            <h4 class="text-danger">{{ patient.get_blood_group_display }}</h4>
+                            <small class="text-muted">Blood Group</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-center">
+                            <h4 class="text-primary">{{ patient.age }}</h4>
+                            <small class="text-muted">Age</small>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="medical-info">
+                    <div class="info-item mb-2">
+                        <label class="small text-muted">Chronic Diseases:</label>
+                        <p class="mb-0">
+                            {% if patient.chronic_diseases %}
+                                <span class="badge bg-warning">{{ patient.chronic_diseases }}</span>
+                            {% else %}
+                                <span class="text-muted">None reported</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="info-item">
+                        <label class="small text-muted">Allergies:</label>
+                        <p class="mb-0">
+                            {% if patient.allergies %}
+                                <span class="badge bg-danger">{{ patient.allergies }}</span>
+                            {% else %}
+                                <span class="text-muted">None reported</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-phone-alt"></i> Emergency Contact</h6>
+            </div>
+            <div class="card-body">
+                {% if patient.emergency_contact_name %}
+                    <div class="emergency-info">
+                        <div class="info-item mb-2">
+                            <label class="small text-muted">Contact Name:</label>
+                            <p class="mb-0 fw-bold">{{ patient.emergency_contact_name }}</p>
+                        </div>
+                        <div class="info-item mb-2">
+                            <label class="small text-muted">Relationship:</label>
+                            <p class="mb-0">{{ patient.emergency_contact_relation|default:"Not specified" }}</p>
+                        </div>
+                        <div class="info-item">
+                            <label class="small text-muted">Phone Number:</label>
+                            <p class="mb-0">
+                                <i class="fas fa-phone"></i> {{ patient.emergency_contact_phone }}
+                            </p>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="text-center py-3">
+                        <i class="fas fa-phone-slash fa-2x text-muted mb-2"></i>
+                        <p class="text-muted mb-0">No emergency contact information</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.record-item {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    background-color: #fff;
+    transition: all 0.3s ease;
+}
+
+.record-item:hover {
+    border-color: #007bff;
+    box-shadow: 0 4px 12px rgba(0,123,255,0.15);
+    transform: translateY(-2px);
+}
+
+.record-item .badge {
+    font-size: 0.8rem;
+}
+
+.medical-info .info-item,
+.emergency-info .info-item {
+    margin-bottom: 10px;
+}
+
+.medical-info .info-item label,
+.emergency-info .info-item label {
+    font-weight: 600;
+    color: #6c757d;
+    margin-bottom: 2px;
+}
+
+.record-item i.fa-file-pdf {
+    color: #dc3545 !important;
+}
+
+.record-item i.fa-file-medical {
+    color: #6c757d !important;
+}
+</style>
+{% endblock %}

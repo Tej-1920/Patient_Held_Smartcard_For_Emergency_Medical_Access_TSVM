@@ -1,0 +1,454 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Emergency Access{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-exclamation-triangle"></i> Emergency Patient Access
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i> 
+                    <strong>Emergency Use Only:</strong> This system should only be used in genuine medical emergencies 
+                    where the patient cannot provide their medical history and immediate access to critical information 
+                    is necessary for proper treatment.
+                </div>
+
+                {% if not request.user.is_verified %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-clock"></i> 
+                    <strong>Account Pending Verification:</strong> Your account is pending NMC verification. 
+                    You cannot access patient records until your account is verified by the administrator.
+                </div>
+                {% else %}
+                <form method="post" onsubmit="return validateEmergencyAccess()">
+                    {% csrf_token %}
+                    
+                    <div class="profile-section">
+                        <h5><i class="fas fa-user-md"></i> Doctor Identification</h5>
+                        <div class="mb-3">
+                            <label for="{{ form.registration_number.id_for_label }}" class="form-label">NMC Registration Number *</label>
+                            {{ form.registration_number }}
+                            {% if form.registration_number.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.registration_number.errors.0 }}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                <i class="fas fa-info-circle"></i> 
+                                Enter your official NMC registration number as it appears in your medical council records.
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.state_medical_council.id_for_label }}" class="form-label">State Medical Council *</label>
+                            {{ form.state_medical_council }}
+                            {% if form.state_medical_council.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.state_medical_council.errors.0 }}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                <i class="fas fa-info-circle"></i> 
+                                Select the state medical council where you are registered.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-section">
+                        <h5><i class="fas fa-id-card"></i> Patient Identification</h5>
+                        <div class="mb-3">
+                            <label for="{{ form.patient_id.id_for_label }}" class="form-label">Patient ID *</label>
+                            {{ form.patient_id }}
+                            {% if form.patient_id.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.patient_id.errors.0 }}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                <i class="fas fa-info-circle"></i> 
+                                Enter unique Patient ID from patient's smart card or emergency card.
+                                Format: PT followed by 8 characters (e.g., PT1A2B3C4)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-section">
+                        <h5><i class="fas fa-notes-medical"></i> Emergency Details</h5>
+                        <div class="mb-3">
+                            <label for="{{ form.access_reason.id_for_label }}" class="form-label">Emergency Reason *</label>
+                            {{ form.access_reason }}
+                            {% if form.access_reason.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.access_reason.errors.0 }}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                Please provide detailed information about the emergency situation and why 
+                                immediate access to patient records is necessary.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-shield-alt"></i> Access Confirmation</h6>
+                        <p class="mb-2">
+                            <strong>By submitting this request, you confirm that:</strong>
+                        </p>
+                        <ul class="mb-0">
+                            <li>This is a genuine medical emergency</li>
+                            <li>Patient consent cannot be obtained due to their condition</li>
+                            <li>The information is necessary for immediate patient care</li>
+                            <li>You understand this access will be logged and audited</li>
+                        </ul>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'doctors:dashboard' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            <i class="fas fa-exclamation-triangle"></i> Request Emergency Access
+                        </button>
+                    </div>
+                </form>
+                
+                {% if emergency_access_granted and patient %}
+                <div class="card border-success mt-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-check-circle"></i> Emergency Access Granted - Patient Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    {% if patient.profile_image %}
+                                        <img src="{{ patient.profile_image.url }}" alt="{{ patient.first_name }} {{ patient.last_name }}" 
+                                             class="img-fluid rounded-circle border border-3 border-success mb-3" 
+                                             style="max-width: 100px; height: 100px; object-fit: cover;">
+                                    {% else %}
+                                        <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                                             style="width: 100px; height: 100px;">
+                                            <i class="fas fa-user fa-3x text-muted"></i>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <h6 class="mb-1">{{ patient.first_name }} {{ patient.last_name }}</h6>
+                                    <p class="text-muted mb-2">{{ patient.patient_id }}</p>
+                                    
+                                    {% if patient.qr_code %}
+                                        <img src="{{ patient.qr_code.url }}" alt="Patient QR Code" 
+                                             class="img-fluid border border-2 border-success" 
+                                             style="max-width: 80px; height: 80px;">
+                                        <p class="small text-muted mt-1">QR Code</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-8">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="info-section">
+                                            <h6 class="text-primary"><i class="fas fa-user"></i> Basic Information</h6>
+                                            <p class="mb-1"><strong>ID:</strong> {{ patient.patient_id }}</p>
+                                            <p class="mb-1"><strong>Email:</strong> {{ patient.email }}</p>
+                                            <p class="mb-1"><strong>Phone:</strong> {{ patient.phone_number }}</p>
+                                            <p class="mb-1"><strong>Blood Group:</strong> 
+                                                <span class="badge bg-danger">{{ patient.get_blood_group_display }}</span>
+                                            </p>
+                                            <p class="mb-1"><strong>Gender:</strong> {{ patient.get_gender_display }}</p>
+                                            <p class="mb-1"><strong>Age:</strong> {{ patient.date_of_birth }}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="info-section">
+                                            <h6 class="text-danger"><i class="fas fa-phone-alt"></i> Emergency Contact</h6>
+                                            {% if patient.emergency_contact_name %}
+                                                <p class="mb-1"><strong>Name:</strong> {{ patient.emergency_contact_name }}</p>
+                                                <p class="mb-1"><strong>Relationship:</strong> {{ patient.emergency_contact_relation|default:"Not specified" }}</p>
+                                                <p class="mb-1"><strong>Phone:</strong> 
+                                                    <i class="fas fa-phone"></i> {{ patient.emergency_contact_phone }}
+                                                </p>
+                                            {% else %}
+                                                <p class="text-muted">No emergency contact information available</p>
+                                            {% endif %}
+                                            
+                                            <h6 class="text-warning mt-3"><i class="fas fa-heartbeat"></i> Medical Information</h6>
+                                            <p class="mb-1"><strong>Chronic Diseases:</strong> 
+                                                {% if patient.chronic_diseases %}
+                                                    <span class="badge bg-warning">{{ patient.chronic_diseases }}</span>
+                                                {% else %}
+                                                    <span class="text-muted">None reported</span>
+                                                {% endif %}
+                                            </p>
+                                            <p class="mb-1"><strong>Allergies:</strong> 
+                                                {% if patient.allergies %}
+                                                    <span class="badge bg-danger">{{ patient.allergies }}</span>
+                                                {% else %}
+                                                    <span class="text-muted">None reported</span>
+                                                {% endif %}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <div class="info-section">
+                                            <h6 class="text-info"><i class="fas fa-file-medical"></i> Medical Records</h6>
+                                            {% with patient.medical_records.all as records %}
+                                                <!-- DEBUG: Total records = {{ records|length }} -->
+                                                {% if records %}
+                                                    <!-- DEBUG: Records exist, showing {{ records|length }} records -->
+                                                    <div class="records-list">
+                                                        {% for record in records %}
+                                                            <div class="record-item mb-2">
+                                                                <div class="d-flex justify-content-between align-items-center">
+                                                                    <div>
+                                                                        <strong>{{ record.get_record_type_display }}</strong>
+                                                                        <p class="mb-0 small text-muted">{{ record.title }}</p>
+                                                                        {% if record.description %}
+                                                                            <p class="mb-0 small text-muted">{{ record.description|truncatewords:10 }}</p>
+                                                                        {% endif %}
+                                                                        <small class="text-muted">
+                                                                            <i class="fas fa-calendar"></i> {{ record.uploaded_at|date:"M d, Y H:i" }}
+                                                                        </small>
+                                                                    </div>
+                                                                    <div>
+                                                                        {% if record.file and record.file.name %}
+                                                                            <!-- DEBUG: File exists - {{ record.file.url }} -->
+                                                                            <a href="{{ record.file.url }}" class="btn btn-sm btn-outline-primary" target="_blank" style="display: inline-block !important; visibility: visible !important; opacity: 1 !important; background-color: #007bff !important; color: white !important; padding: 8px 16px !important; font-weight: bold !important; text-decoration: none !important;">
+                                                                                <i class="fas fa-download"></i> Download File
+                                                                            </a>
+                                                                            <!-- DEBUG: End of download button -->
+                                                                        {% else %}
+                                                                            <!-- DEBUG: No file found for this record - record.file: {{ record.file }} -->
+                                                                            <span class="text-danger" style="font-weight: bold;">NO FILE FOUND - CHECK RECORD ID: {{ record.id }}</span>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    <p class="text-muted">No medical records uploaded</p>
+                                                {% endif %}
+                                            {% endwith %}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <div class="alert alert-info">
+                                            <h6><i class="fas fa-shield-alt"></i> Access Information</h6>
+                                            <p class="mb-1">
+                                                <strong>Access Type:</strong> 
+                                                <span class="badge bg-danger">EMERGENCY</span>
+                                            </p>
+                                            <p class="mb-1">
+                                                <strong>Access Time:</strong> 
+                                                {{ request.user.access_logs.last.accessed_at|date:"F d, Y H:i:s" }}
+                                            </p>
+                                            <p class="mb-0">
+                                                <strong>IP Address:</strong> {{ request.user.access_logs.last.ip_address }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <div class="d-flex gap-2">
+                                            <a href="{% url 'doctors:view_patient_profile' patient.id %}" class="btn btn-primary">
+                                                <i class="fas fa-user"></i> Full Profile
+                                            </a>
+                                            <a href="{% url 'doctors:view_patient_records' patient.id %}" class="btn btn-info">
+                                                <i class="fas fa-file-medical"></i> All Records
+                                            </a>
+                                            <a href="{% url 'doctors:emergency_access' %}" class="btn btn-outline-secondary">
+                                                <i class="fas fa-plus"></i> New Emergency Access
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-history"></i> Recent Emergency Access</h6>
+            </div>
+            <div class="card-body">
+                {% if recent_access_logs %}
+                    {% for log in recent_access_logs %}
+                    <div class="access-log-item {% if log.access_type == 'EMERGENCY' %}emergency{% endif %}">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">{{ log.patient.first_name }} {{ log.patient.last_name }}</h6>
+                                <p class="mb-1 text-muted">ID: {{ log.patient.patient_id }}</p>
+                                <small class="text-muted">{{ log.access_reason|truncatewords:10 }}</small>
+                            </div>
+                            <div class="text-end">
+                                <small class="text-muted">{{ log.accessed_at|date:"M d, Y H:i" }}</small>
+                                <br>
+                                <span class="badge {% if log.access_type == 'EMERGENCY' %}bg-danger{% else %}bg-primary{% endif %}">
+                                    {{ log.get_access_type_display }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted text-center">No emergency access records found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-control {
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.btn-lg {
+    padding: 12px 30px;
+    font-weight: 600;
+}
+
+.profile-section {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.profile-section h5 {
+    color: #dc3545;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.access-log-item {
+    border-left: 4px solid var(--primary-color);
+    padding-left: 1rem;
+    margin-bottom: 1rem;
+}
+
+.access-log-item.emergency {
+    border-left-color: var(--danger-color);
+    background-color: #fff5f5;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.border-danger {
+    border-color: #dc3545 !important;
+}
+
+.bg-danger {
+    background-color: #dc3545 !important;
+}
+
+.info-section {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-left: 4px solid #007bff;
+}
+
+.info-section h6 {
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.record-item {
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 10px;
+    background-color: #fff;
+    transition: all 0.3s ease;
+}
+
+.record-item:hover {
+    border-color: #007bff;
+    box-shadow: 0 2px 8px rgba(0,123,255,0.15);
+}
+
+/* Ensure download buttons are always visible */
+.record-item .btn-outline-primary {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    z-index: 10 !important;
+    color: #007bff !important;
+    border-color: #007bff !important;
+    background-color: transparent !important;
+}
+
+.record-item .btn-outline-primary:hover {
+    color: #fff !important;
+    background-color: #007bff !important;
+    border-color: #007bff !important;
+}
+
+/* Ensure medical records section is visible */
+.records-list {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.record-item {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.border-success {
+    border-color: #28a745 !important;
+}
+
+.bg-success {
+    background-color: #28a745 !important;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const textareas = document.querySelectorAll('textarea');
+    textareas.forEach(textarea => {
+        textarea.classList.add('form-control');
+    });
+    
+    const inputs = document.querySelectorAll('input[type="text"]');
+    inputs.forEach(input => {
+        input.classList.add('form-control');
+    });
+});
+</script>
+{% endblock %}

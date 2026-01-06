@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-user"></i> My Profile</h2>
+            <div class="patient-id">
+                <i class="fas fa-id-badge"></i> Patient ID: {{ patient.patient_id }}
+                <button class="btn btn-sm btn-light ms-2" onclick="copyPatientId('{{ patient.patient_id }}')" title="Copy ID">
+                    <i class="fas fa-copy"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-user"></i> Personal Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Full Name:</strong> {{ patient.first_name }} {{ patient.last_name }}</p>
+                        <p><strong>Email:</strong> {{ patient.email }}</p>
+                        <p><strong>Phone:</strong> {{ patient.phone_number }}</p>
+                        {% if patient.date_of_birth %}
+                        <p><strong>Date of Birth:</strong> {{ patient.date_of_birth }}</p>
+                        {% endif %}
+                        {% if patient.gender %}
+                        <p><strong>Gender:</strong> {{ patient.get_gender_display }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        {% if patient.blood_group %}
+                        <p><strong>Blood Group:</strong> <span class="badge bg-danger">{{ patient.get_blood_group_display }}</span></p>
+                        {% endif %}
+                        {% if patient.address %}
+                        <p><strong>Address:</strong><br>{{ patient.address|linebreaks }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-qrcode"></i> Patient Smart Card QR Code</h5>
+            </div>
+            <div class="card-body">
+                {% if patient.qr_code %}
+                    <div class="row align-items-center">
+                        <div class="col-md-4 text-center">
+                            <img src="{{ patient.qr_code.url }}" alt="Patient QR Code" class="img-fluid border rounded" style="max-width: 200px;">
+                            <div class="mt-2">
+                                <a href="{{ patient.qr_code.url }}" download="patient_{{ patient.patient_id }}_qr.png" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-download"></i> Download QR Code
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <h6 class="text-muted">About Your QR Code</h6>
+                            <p>This QR code contains your complete patient information and can be used for:</p>
+                            <ul>
+                                <li>Quick patient identification</li>
+                                <li>Emergency medical access</li>
+                                <li>Physical smart card generation</li>
+                                <li>Hospital check-in and registration</li>
+                            </ul>
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i>
+                                <strong>Note:</strong> This QR code is unique to your profile and contains your personal medical information.
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>QR Code Not Generated:</strong> Complete your profile setup to generate your patient smart card QR code.
+                        <div class="mt-2">
+                            <a href="{% url 'patients:edit_profile' %}" class="btn btn-warning">
+                                <i class="fas fa-edit"></i> Complete Profile Setup
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-phone-alt"></i> Emergency Contact</h5>
+            </div>
+            <div class="card-body">
+                {% if patient.emergency_contact_name %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Contact Name:</strong> {{ patient.emergency_contact_name }}</p>
+                            <p><strong>Relationship:</strong> {{ patient.emergency_contact_relation|default:"Not specified" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Contact Phone:</strong> {{ patient.emergency_contact_phone }}</p>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i> 
+                        No emergency contact information provided. 
+                        <a href="{% url 'patients:edit_profile' %}">Update your profile</a> to add emergency contacts.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-heartbeat"></i> Medical Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Chronic Diseases</h6>
+                        {% if patient.chronic_diseases %}
+                            <p>{{ patient.chronic_diseases|linebreaks }}</p>
+                        {% else %}
+                            <p class="text-muted">No chronic diseases recorded.</p>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Allergies</h6>
+                        {% if patient.allergies %}
+                            <p>{{ patient.allergies|linebreaks }}</p>
+                        {% else %}
+                            <p class="text-muted">No allergies recorded.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-bolt"></i> Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'patients:edit_profile' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-user-edit"></i> Edit Profile
+                    </a>
+                    <a href="{% url 'patients:upload_record' %}" class="btn btn-outline-success">
+                        <i class="fas fa-upload"></i> Upload Record
+                    </a>
+                    <a href="{% url 'patients:view_records' %}" class="btn btn-outline-info">
+                        <i class="fas fa-folder-open"></i> View Records
+                    </a>
+                    <a href="{% url 'patients:dashboard' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-shield-alt"></i> Emergency Info</h5>
+            </div>
+            <div class="card-body">
+                <div class="emergency-badge text-center mb-3">
+                    <i class="fas fa-exclamation-triangle"></i> EMERGENCY ACCESS
+                </div>
+                <p class="small text-center">
+                    Share your Patient ID <strong>{{ patient.patient_id }}</strong> with healthcare providers 
+                    for emergency access to your medical information.
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-chart-line"></i> Account Stats</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <h4 class="text-primary">{{ patient.medical_records.count }}</h4>
+                        <small class="text-muted">Records</small>
+                    </div>
+                    <div class="col-6">
+                        <h4 class="text-success">{{ patient.created_at|date:"M d" }}</h4>
+                        <small class="text-muted">Member Since</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

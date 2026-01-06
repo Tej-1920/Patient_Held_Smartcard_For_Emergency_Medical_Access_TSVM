@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Manage Doctors{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-user-md"></i> Manage Doctors</h2>
+            <div>
+                <a href="{% url 'admin_panel:dashboard' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-list"></i> Doctor Records
+                    <span class="badge bg-success ms-2">{{ doctors.count }}</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if doctors %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Doctor ID</th>
+                                <th>Name</th>
+                                <th>Contact</th>
+                                <th>Professional Details</th>
+                                <th>Credentials</th>
+                                <th>Registration</th>
+                                <th>Verification</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for doctor in doctors %}
+                            <tr>
+                                <td>
+                                    <span class="badge bg-info">{{ doctor.doctor_id }}</span>
+                                </td>
+                                <td>
+                                    <strong>{{ doctor.first_name }} {{ doctor.last_name }}</strong>
+                                </td>
+                                <td>
+                                    <div>
+                                        <small class="text-muted d-block">{{ doctor.email }}</small>
+                                        <small class="text-muted">{{ doctor.phone_number }}</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <span class="badge bg-primary">{{ doctor.get_specialization_display }}</span>
+                                        <br><small class="text-muted">{{ doctor.hospital_name }}</small>
+                                        <br><small>{{ doctor.years_of_experience }} years</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <small><strong>NMC:</strong> {{ doctor.nmc_registration_number }}</small>
+                                        <br><small><strong>License:</strong> {{ doctor.medical_license_number }}</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <small>{{ doctor.state_medical_council }}</small>
+                                </td>
+                                <td>
+                                    {% if doctor.is_verified %}
+                                        <span class="badge bg-success">Verified</span>
+                                        <br><small class="text-muted">{{ doctor.verification_date|date:"M d, Y" }}</small>
+                                    {% else %}
+                                        <span class="badge bg-warning">Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="{% url 'admin_panel:view_doctor_details' doctor.id %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                        {% if not doctor.is_verified %}
+                                        <a href="{% url 'admin_panel:verify_doctor' doctor.id %}" class="btn btn-sm btn-outline-success">
+                                            <i class="fas fa-check"></i> Verify
+                                        </a>
+                                        {% endif %}
+                                        <button class="btn btn-sm btn-outline-danger" onclick="confirmDeleteDoctor('{{ doctor.id }}', '{{ doctor.first_name }} {{ doctor.last_name }}')">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-user-md fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No Doctors Found</h5>
+                    <p class="text-muted">No doctors have registered in the system yet.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Doctor Details Modal -->
+<div class="modal fade" id="doctorDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Doctor Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="doctorDetailsContent">
+                <!-- Content will be loaded dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong id="deleteDoctorName"></strong>?</p>
+                <p class="text-danger">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.table-responsive {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.btn-group .btn {
+    margin-right: 2px;
+}
+
+.badge {
+    font-size: 0.8em;
+}
+
+.modal-body {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.doctor-detail-row {
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+}
+
+.doctor-detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #495057;
+    width: 150px;
+    display: inline-block;
+}
+
+.verification-badge {
+    display: inline-block;
+    margin-bottom: 5px;
+}
+</style>
+
+<script>
+let doctorToDelete = null;
+
+function viewDoctorDetails(doctorId) {
+    // In a real application, this would fetch doctor details via AJAX
+    alert('Doctor details view would open here for doctor ID: ' + doctorId);
+}
+
+function confirmDeleteDoctor(doctorId, doctorName) {
+    if (confirm(`Are you sure you want to delete Dr. ${doctorName}? This action cannot be undone.`)) {
+        window.location.href = `/admin-panel/doctors/delete/${doctorId}/`;
+    }
+}
+
+document.getElementById('confirmDeleteBtn')?.addEventListener('click', function() {
+    if (doctorToDelete) {
+        // In a real application, this would send delete request
+        alert('Delete functionality would be implemented here for doctor ID: ' + doctorToDelete);
+        
+        const modal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal'));
+        modal.hide();
+        doctorToDelete = null;
+    }
+});
+</script>
+{% endblock %}

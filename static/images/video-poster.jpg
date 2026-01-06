@@ -1,0 +1,9 @@
+This is a placeholder for the video poster image.
+In a real implementation, you would place an actual JPG image here that serves as the thumbnail for the video.
+The poster should show:
+- Patient Smart Card logo
+- Professional healthcare imagery
+- Clear title text
+- Appealing design that encourages clicks
+
+For now, the video will show a default browser poster or you can replace this with an actual image file.

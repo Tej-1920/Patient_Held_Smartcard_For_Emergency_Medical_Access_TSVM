@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stats-card">
+            <h3>{{ total_patients }}</h3>
+            <p><i class="fas fa-users"></i> Total Patients</p>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stats-card">
+            <h3>{{ total_doctors }}</h3>
+            <p><i class="fas fa-user-md"></i> Total Doctors</p>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stats-card">
+            <h3>{{ verified_doctors }}</h3>
+            <p><i class="fas fa-check-circle"></i> Verified Doctors</p>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stats-card">
+            <h3>{{ pending_doctors }}</h3>
+            <p><i class="fas fa-clock"></i> Pending Verification</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-history"></i> Recent Access Logs</h5>
+                <a href="{% url 'admin_panel:view_access_logs' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                {% if recent_access_logs %}
+                    {% for log in recent_access_logs %}
+                    <div class="access-log-item {% if log.access_type == 'EMERGENCY' %}emergency{% endif %}">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">Dr. {{ log.doctor.first_name }} {{ log.doctor.last_name }} → {{ log.patient.first_name }} {{ log.patient.last_name }}</h6>
+                                <p class="mb-1 text-muted">Doctor: {{ log.doctor.doctor_id }} | Patient: {{ log.patient.patient_id }}</p>
+                                <small class="text-muted">{{ log.access_reason|truncatewords:10 }}</small>
+                            </div>
+                            <div class="text-end">
+                                <small class="text-muted">{{ log.accessed_at|date:"M d, Y H:i" }}</small>
+                                <br>
+                                <span class="badge {% if log.access_type == 'EMERGENCY' %}bg-danger{% else %}bg-primary{% endif %}">
+                                    {{ log.get_access_type_display }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No access logs found.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-bolt"></i> Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'admin_panel:manage_patients' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-users"></i> Manage Patients
+                    </a>
+                    <a href="{% url 'admin_panel:manage_doctors' %}" class="btn btn-outline-success">
+                        <i class="fas fa-user-md"></i> Manage Doctors
+                    </a>
+                    <a href="{% url 'admin_panel:view_access_logs' %}" class="btn btn-outline-info">
+                        <i class="fas fa-list"></i> Access Logs
+                    </a>
+                    <a href="/admin/" class="btn btn-outline-secondary">
+                        <i class="fas fa-cogs"></i> Django Admin
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {% if pending_doctors > 0 %}
+        <div class="card mb-4">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Pending Verifications</h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center">
+                    <h4 class="text-warning">{{ pending_doctors }}</h4>
+                    <p class="text-muted">Doctors awaiting verification</p>
+                    <a href="{% url 'admin_panel:manage_doctors' %}" class="btn btn-warning">
+                        <i class="fas fa-check-circle"></i> Review Applications
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-chart-line"></i> System Overview</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <h4 class="text-primary">{{ total_patients }}</h4>
+                        <small class="text-muted">Patients</small>
+                    </div>
+                    <div class="col-6">
+                        <h4 class="text-success">{{ total_doctors }}</h4>
+                        <small class="text-muted">Doctors</small>
+                    </div>
+                </div>
+                <hr>
+                <div class="row text-center">
+                    <div class="col-6">
+                        <h6 class="text-info">{{ verified_doctors }}</h6>
+                        <small class="text-muted">Verified</small>
+                    </div>
+                    <div class="col-6">
+                        <h6 class="text-warning">{{ pending_doctors }}</h6>
+                        <small class="text-muted">Pending</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-database"></i> Doctor Database Statistics</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <h4 class="text-success">{{ validation_stats.total_active_doctors }}</h4>
+                        <small class="text-muted">Active Doctors</small>
+                    </div>
+                    <div class="col-6">
+                        <h4 class="text-danger">{{ validation_stats.total_blacklisted_doctors }}</h4>
+                        <small class="text-muted">Blacklisted</small>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-12">
+                        <h6>State Medical Councils</h6>
+                        <div class="small">
+                            {% for council in validation_stats.state_councils_active %}
+                                <span class="badge bg-secondary me-1">{{ council }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.stats-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.stats-card h3 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.stats-card p {
+    margin: 0;
+    opacity: 0.9;
+}
+
+.access-log-item {
+    border-left: 4px solid var(--primary-color);
+    padding-left: 1rem;
+    margin-bottom: 1rem;
+}
+
+.access-log-item.emergency {
+    border-left-color: var(--danger-color);
+    background-color: #fff5f5;
+    padding: 1rem;
+    border-radius: 8px;
+}
+</style>
+{% endblock %}

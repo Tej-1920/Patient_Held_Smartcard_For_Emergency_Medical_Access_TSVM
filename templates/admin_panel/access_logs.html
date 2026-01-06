@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Access Logs{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-list"></i> Access Logs</h2>
+            <div>
+                <a href="{% url 'admin_panel:dashboard' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-history"></i> Recent Access Activity
+                    <span class="badge bg-info ms-2">{{ logs.count }}</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if logs %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Date/Time</th>
+                                <th>Doctor</th>
+                                <th>Patient</th>
+                                <th>Access Type</th>
+                                <th>Validation</th>
+                                <th>Reason</th>
+                                <th>IP Address</th>
+                                <th>Records</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in logs %}
+                            <tr class="{% if log.access_type == 'EMERGENCY' %}table-danger{% endif %}">
+                                <td>
+                                    <small>{{ log.accessed_at|date:"M d, Y H:i" }}</small>
+                                </td>
+                                <td>
+                                    <div>
+                                        <strong>Dr. {{ log.doctor.first_name }} {{ log.doctor.last_name }}</strong>
+                                        <br><small class="text-muted">{{ log.doctor.doctor_id }}</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <strong>{{ log.patient.first_name }} {{ log.patient.last_name }}</strong>
+                                        <br><small class="text-muted">{{ log.patient.patient_id }}</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge {% if log.access_type == 'EMERGENCY' %}bg-danger{% else %}bg-primary{% endif %}">
+                                        {{ log.get_access_type_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge {% if log.validation_status == 'AUTHORIZED' %}bg-success{% elif log.validation_status == 'BLACKLISTED' %}bg-danger{% elif log.validation_status == 'NOT_FOUND' %}bg-warning{% else %}bg-secondary{% endif %}">
+                                        {{ log.get_validation_status_display }}
+                                    </span>
+                                    {% if log.registration_number_used %}
+                                    <br><small class="text-muted">Reg: {{ log.registration_number_used }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <small>{{ log.access_reason|truncatewords:8 }}</small>
+                                </td>
+                                <td>
+                                    <small class="text-muted">{{ log.ip_address }}</small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">{{ log.records_viewed }}</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No Access Logs Found</h5>
+                    <p class="text-muted">No access activity has been recorded yet.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Access Log Details Modal -->
+<div class="modal fade" id="logDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Access Log Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="logDetailsContent">
+                <!-- Content will be loaded dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h4 class="text-primary">{{ emergency_count }}</h4>
+                <p class="mb-0"><i class="fas fa-exclamation-triangle"></i> Emergency Access</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h4 class="text-success">{{ authorized_count }}</h4>
+                <p class="mb-0"><i class="fas fa-check-circle"></i> Authorized</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h4 class="text-danger">{{ blacklisted_count }}</h4>
+                <p class="mb-0"><i class="fas fa-times-circle"></i> Blacklisted</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h4 class="text-warning">{{ not_found_count }}</h4>
+                <p class="mb-0"><i class="fas fa-question-circle"></i> Not Found</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.table-responsive {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+.table td {
+    vertical-align: middle;
+    font-size: 0.9em;
+}
+
+.table-danger {
+    background-color: #fff5f5 !important;
+}
+
+.badge {
+    font-size: 0.7em;
+}
+
+.modal-body {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.log-detail-row {
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+}
+
+.log-detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #495057;
+    width: 150px;
+    display: inline-block;
+}
+
+.stats-card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.stats-card:hover {
+    transform: translateY(-2px);
+}
+
+.text-muted {
+    font-size: 0.8em;
+}
+</style>
+
+<script>
+function viewLogDetails(logId) {
+    // In a real application, this would fetch log details via AJAX
+    alert('Access log details would open here for log ID: ' + logId);
+}
+
+// Add click handlers for table rows
+document.addEventListener('DOMContentLoaded', function() {
+    const tableRows = document.querySelectorAll('tbody tr');
+    tableRows.forEach(row => {
+        row.style.cursor = 'pointer';
+        row.addEventListener('click', function(e) {
+            if (!e.target.closest('button')) {
+                // Get log ID from the row (would need to add data attribute)
+                console.log('Row clicked');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

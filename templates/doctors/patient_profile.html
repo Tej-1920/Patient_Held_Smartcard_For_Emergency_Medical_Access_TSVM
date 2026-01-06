@@ -1,0 +1,297 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Patient Profile - {{ patient.first_name }} {{ patient.last_name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-user"></i> Patient Profile</h2>
+            <div>
+                <a href="{% url 'doctors:search_patient' %}" class="btn btn-outline-secondary me-2">
+                    <i class="fas fa-arrow-left"></i> Back to Search
+                </a>
+                <a href="{% url 'doctors:dashboard' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-user"></i> Patient Information</h5>
+            </div>
+            <div class="card-body text-center">
+                {% if patient.profile_image %}
+                    <img src="{{ patient.profile_image.url }}" alt="{{ patient.first_name }} {{ patient.last_name }}" 
+                         class="img-fluid rounded-circle border border-3 border-primary mb-3" 
+                         style="max-width: 120px; height: 120px; object-fit: cover;">
+                {% else %}
+                    <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                         style="width: 120px; height: 120px;">
+                        <i class="fas fa-user fa-3x text-muted"></i>
+                    </div>
+                {% endif %}
+                
+                <h5 class="mb-1">{{ patient.first_name }} {{ patient.last_name }}</h5>
+                <p class="text-muted mb-2">{{ patient.patient_id }}</p>
+                
+                {% if patient.qr_code %}
+                    <div class="mb-3">
+                        <img src="{{ patient.qr_code.url }}" alt="Patient QR Code" 
+                             class="img-fluid border border-2 border-success" 
+                             style="max-width: 100px; height: 100px;">
+                        <p class="small text-muted mt-1">Patient QR Code</p>
+                    </div>
+                {% endif %}
+                
+                <div class="d-grid gap-2">
+                    <a href="{% url 'doctors:view_patient_records' patient.id %}" class="btn btn-primary">
+                        <i class="fas fa-file-medical"></i> View Medical Records
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-id-badge"></i> Quick Info</h5>
+            </div>
+            <div class="card-body">
+                <div class="quick-info">
+                    <div class="info-item mb-3">
+                        <label class="small text-muted">Patient ID</label>
+                        <p class="mb-0 fw-bold">{{ patient.patient_id }}</p>
+                    </div>
+                    <div class="info-item mb-3">
+                        <label class="small text-muted">Email</label>
+                        <p class="mb-0">{{ patient.email }}</p>
+                    </div>
+                    <div class="info-item mb-3">
+                        <label class="small text-muted">Phone</label>
+                        <p class="mb-0">{{ patient.phone_number }}</p>
+                    </div>
+                    <div class="info-item mb-3">
+                        <label class="small text-muted">Blood Group</label>
+                        <p class="mb-0">
+                            <span class="badge bg-danger">{{ patient.get_blood_group_display }}</span>
+                        </p>
+                    </div>
+                    <div class="info-item">
+                        <label class="small text-muted">Gender</label>
+                        <p class="mb-0">{{ patient.get_gender_display }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-user-md"></i> Personal Details</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="detail-item mb-3">
+                            <label class="small text-muted">Date of Birth</label>
+                            <p class="mb-0">{{ patient.date_of_birth|date:"F d, Y" }}</p>
+                        </div>
+                        <div class="detail-item mb-3">
+                            <label class="small text-muted">Age</label>
+                            <p class="mb-0">{{ patient.age }} years</p>
+                        </div>
+                        <div class="detail-item mb-3">
+                            <label class="small text-muted">Gender</label>
+                            <p class="mb-0">{{ patient.get_gender_display }}</p>
+                        </div>
+                        <div class="detail-item">
+                            <label class="small text-muted">Blood Group</label>
+                            <p class="mb-0">
+                                <span class="badge bg-danger">{{ patient.get_blood_group_display }}</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-item mb-3">
+                            <label class="small text-muted">Email</label>
+                            <p class="mb-0">{{ patient.email }}</p>
+                        </div>
+                        <div class="detail-item mb-3">
+                            <label class="small text-muted">Phone Number</label>
+                            <p class="mb-0">{{ patient.phone_number }}</p>
+                        </div>
+                        <div class="detail-item">
+                            <label class="small text-muted">Address</label>
+                            <p class="mb-0">{{ patient.address|default:"Not provided" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-phone-alt"></i> Emergency Contact</h5>
+            </div>
+            <div class="card-body">
+                {% if patient.emergency_contact_name %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="detail-item mb-3">
+                                <label class="small text-muted">Contact Name</label>
+                                <p class="mb-0 fw-bold">{{ patient.emergency_contact_name }}</p>
+                            </div>
+                            <div class="detail-item">
+                                <label class="small text-muted">Relationship</label>
+                                <p class="mb-0">{{ patient.emergency_contact_relationship|default:"Not specified" }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-item mb-3">
+                                <label class="small text-muted">Phone Number</label>
+                                <p class="mb-0">
+                                    <i class="fas fa-phone"></i> {{ patient.emergency_contact_number }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="text-center py-3">
+                        <i class="fas fa-phone-slash fa-2x text-muted mb-2"></i>
+                        <p class="text-muted mb-0">No emergency contact information provided</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-heartbeat"></i> Medical Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="detail-item mb-3">
+                            <label class="small text-muted">Chronic Diseases</label>
+                            <p class="mb-0">
+                                {% if patient.chronic_diseases %}
+                                    <span class="badge bg-warning">{{ patient.chronic_diseases }}</span>
+                                {% else %}
+                                    <span class="text-muted">None reported</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-item mb-3">
+                            <label class="small text-muted">Allergies</label>
+                            <p class="mb-0">
+                                {% if patient.allergies %}
+                                    <span class="badge bg-danger">{{ patient.allergies }}</span>
+                                {% else %}
+                                    <span class="text-muted">None reported</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-file-medical"></i> Recent Medical Records</h5>
+                <a href="{% url 'doctors:view_patient_records' patient.id %}" class="btn btn-sm btn-outline-primary">
+                    View All Records
+                </a>
+            </div>
+            <div class="card-body">
+                {% with patient.medical_records.all|slice:":5" as recent_records %}
+                    {% if recent_records %}
+                        {% for record in recent_records %}
+                            <div class="record-item mb-3">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="mb-1">{{ record.document_type|title }}</h6>
+                                        <p class="mb-1 text-muted">{{ record.description|truncatewords:15 }}</p>
+                                        <small class="text-muted">
+                                            <i class="fas fa-calendar"></i> {{ record.uploaded_at|date:"M d, Y H:i" }}
+                                        </small>
+                                    </div>
+                                    <div>
+                                        {% if record.document %}
+                                            <a href="{{ record.document.url }}" class="btn btn-sm btn-outline-info" target="_blank">
+                                                <i class="fas fa-download"></i> Download
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% if not forloop.last %}
+                                <hr>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-file-medical fa-3x text-muted mb-3"></i>
+                            <p class="text-muted mb-0">No medical records uploaded yet</p>
+                        </div>
+                    {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.patient-info-card {
+    border-left: 4px solid var(--primary-color);
+}
+
+.detail-item {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.detail-item label {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.record-item {
+    border-left: 4px solid var(--info-color);
+    padding-left: 15px;
+}
+
+.record-item:hover {
+    background-color: #f8f9fa;
+    padding: 10px;
+    padding-left: 15px;
+    border-radius: 5px;
+}
+
+.quick-info .info-item {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.quick-info .info-item label {
+    font-weight: 600;
+    color: #6c757d;
+}
+</style>
+{% endblock %}

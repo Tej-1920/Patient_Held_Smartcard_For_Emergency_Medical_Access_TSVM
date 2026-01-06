@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Patient Details - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user"></i> 
+                        Patient Details
+                    </h4>
+                    <a href="{% url 'admin_panel:manage_patients' %}" class="btn btn-light btn-sm">
+                        <i class="fas fa-arrow-left"></i> Back to Patients
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Patient Information -->
+                <div class="row mb-4">
+                    <div class="col-md-4 text-center">
+                        <div class="patient-avatar mb-3">
+                            <i class="fas fa-user-circle fa-5x text-primary"></i>
+                        </div>
+                        <h5>{{ patient.first_name }} {{ patient.last_name }}</h5>
+                        <p class="text-muted">Patient ID: {{ patient.patient_id }}</p>
+                        <span class="badge bg-info">{{ patient.get_gender_display }}</span>
+                        <span class="badge bg-secondary">{{ patient.blood_group }}</span>
+                    </div>
+                    <div class="col-md-8">
+                        <h6 class="text-muted mb-3">Personal Information</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Full Name:</strong> {{ patient.first_name }} {{ patient.last_name }}</p>
+                                <p><strong>Email:</strong> {{ patient.email }}</p>
+                                <p><strong>Phone:</strong> {{ patient.phone_number }}</p>
+                                <p><strong>Date of Birth:</strong> {{ patient.date_of_birth|date:"M d, Y" }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Gender:</strong> {{ patient.get_gender_display }}</p>
+                                <p><strong>Blood Group:</strong> {{ patient.blood_group }}</p>
+                                <p><strong>Address:</strong> {{ patient.address }}</p>
+                                <p><strong>Registered:</strong> {{ patient.created_at|date:"M d, Y H:i" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Medical Records -->
+                <div class="mt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="text-muted mb-0">
+                            <i class="fas fa-file-medical"></i> 
+                            Medical Records ({{ total_records }})
+                        </h6>
+                        {% if total_records > 0 %}
+                            <span class="badge bg-success">{{ total_records }} Records</span>
+                        {% else %}
+                            <span class="badge bg-secondary">No Records</span>
+                        {% endif %}
+                    </div>
+                    
+                    {% if medical_records %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Diagnosis</th>
+                                        <th>Treatment</th>
+                                        <th>Doctor</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for record in medical_records %}
+                                    <tr>
+                                        <td>{{ record.created_at|date:"M d, Y" }}</td>
+                                        <td>{{ record.diagnosis|truncatechars:50 }}</td>
+                                        <td>{{ record.treatment|truncatechars:50 }}</td>
+                                        <td>
+                                            {% if record.doctor %}
+                                                Dr. {{ record.doctor.first_name }} {{ record.doctor.last_name }}
+                                            {% else %}
+                                                <span class="text-muted">Not specified</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if record.is_active %}
+                                                <span class="badge bg-success">Active</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">Inactive</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>No Medical Records:</strong> This patient has no medical records in the system.
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Emergency Contact -->
+                <div class="mt-4">
+                    <h6 class="text-muted mb-3">
+                        <i class="fas fa-phone-alt"></i> Emergency Contact
+                    </h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Contact Name:</strong> {{ patient.emergency_contact_name|default:"Not provided" }}</p>
+                            <p><strong>Contact Phone:</strong> {{ patient.emergency_contact_phone|default:"Not provided" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Relationship:</strong> {{ patient.emergency_contact_relationship|default:"Not provided" }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Status -->
+                <div class="mt-4">
+                    <h6 class="text-muted mb-3">
+                        <i class="fas fa-shield-alt"></i> Account Status
+                    </h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Account Status:</strong> 
+                                {% if patient.is_active %}
+                                    <span class="badge bg-success">Active</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Inactive</span>
+                                {% endif %}
+                            </p>
+                            <p><strong>Last Login:</strong> 
+                                {% if patient.last_login %}
+                                    {{ patient.last_login|date:"M d, Y H:i" }}
+                                {% else %}
+                                    <span class="text-muted">Never logged in</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Account Created:</strong> {{ patient.created_at|date:"M d, Y H:i" }}</p>
+                            <p><strong>Last Updated:</strong> {{ patient.updated_at|date:"M d, Y H:i" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.patient-avatar {
+    margin-bottom: 1rem;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: #495057;
+}
+
+.badge {
+    font-size: 0.8em;
+}
+
+.card-header {
+    border-bottom: 3px solid #007bff;
+}
+</style>
+{% endblock %}

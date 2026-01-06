@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Doctor Portal - Patient Smart Card System{% endblock %}
+
+{% block content %}
+<div class="hero-section text-center">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-4">
+            <i class="fas fa-user-md"></i> Doctor Portal
+        </h1>
+        <p class="lead mb-4">
+            Access patient medical information during emergencies with secure NMC verification. 
+            Help save lives with quick access to critical medical data.
+        </p>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a href="{% url 'doctors:register' %}" class="btn btn-light btn-lg me-md-2">
+                        <i class="fas fa-user-plus"></i> Register as Doctor
+                    </a>
+                    <a href="{% url 'doctors:login' %}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-sign-in-alt"></i> Doctor Login
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <i class="fas fa-certificate fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">NMC Verified</h5>
+                    <p class="card-text">
+                        All doctors are verified through NMC registration to ensure authenticity and proper credentials.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <i class="fas fa-clock fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Emergency Access</h5>
+                    <p class="card-text">
+                        Quick access to patient medical history during critical situations with proper logging and audit trails.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <i class="fas fa-shield-alt fa-3x text-info mb-3"></i>
+                    <h5 class="card-title">Secure & Logged</h5>
+                    <p class="card-text">
+                        All access is logged and monitored to ensure patient privacy and security compliance.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> How Emergency Access Works</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 text-center mb-3">
+                            <div class="step-number">1</div>
+                            <h6>Verify Identity</h6>
+                            <p class="small">Login with NMC-verified credentials</p>
+                        </div>
+                        <div class="col-md-3 text-center mb-3">
+                            <div class="step-number">2</div>
+                            <h6>Enter Patient ID</h6>
+                            <p class="small">Input patient's unique ID from their card</p>
+                        </div>
+                        <div class="col-md-3 text-center mb-3">
+                            <div class="step-number">3</div>
+                            <h6>Provide Reason</h6>
+                            <p class="small">Explain the emergency situation</p>
+                        </div>
+                        <div class="col-md-3 text-center mb-3">
+                            <div class="step-number">4</div>
+                            <h6>Access Records</h6>
+                            <p class="small">View critical medical information</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-user-injured"></i> For Patients</h5>
+                </div>
+                <div class="card-body">
+                    <p>Patients can register, upload medical records, and manage their health information for emergency access.</p>
+                    <a href="{% url 'patients:login' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-sign-in-alt"></i> Patient Portal
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-user-shield"></i> For Administrators</h5>
+                </div>
+                <div class="card-body">
+                    <p>System administrators manage doctor verifications and monitor access logs for security compliance.</p>
+                    <a href="{% url 'admin_panel:login' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-sign-in-alt"></i> Admin Portal
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Important Notice</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">
+                        <strong>Emergency access should only be used in genuine medical emergencies.</strong> 
+                        All access is logged and monitored. Unauthorized access may result in legal consequences 
+                        and professional disciplinary action. This system is designed to save lives during 
+                        critical situations when patients cannot provide their medical history.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.step-number {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--info-color));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin: 0 auto 1rem;
+}
+</style>
+{% endblock %}
